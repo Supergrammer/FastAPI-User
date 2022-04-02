@@ -1,0 +1,52 @@
+[
+    {
+        "name": "기능 추가 (Enhancement)",
+        "color": "0E8A16",
+        "description": "New feature or request"
+    },
+    {
+        "name": "냅둬라... (Wontfix)",
+        "color": "FFFFFF",
+        "description": "This will not be worked on"
+    },
+    {
+        "name": "도움좀... (Help wanted)",
+        "color": "006B75",
+        "description": "Extra attention is needed"
+    },
+    {
+        "name": "리서치 (Research)",
+        "color": "FF00CC",
+        "description": "Research"
+    },
+    {
+        "name": "문서 (Documentation)",
+        "color": "1D76DB",
+        "description": "Improvements or additions to documentation"
+    },
+    {
+        "name": "버그 (Bug)",
+        "color": "B60205",
+        "description": "Something isn't working"
+    },
+    {
+        "name": "이거 맞냐? (Invalid)",
+        "color": "FBCA04",
+        "description": "This doesn't seem right"
+    },
+    {
+        "name": "잘 봐라 (Good first issue)",
+        "color": "5319E7",
+        "description": "Good for newcomers"
+    },
+    {
+        "name": "질문 (Question)",
+        "color": "D93F0B",
+        "description": "Further information is requested"
+    },
+    {
+        "name": "확인좀 할래? (Duplicate)",
+        "color": "CCCCCC",
+        "description": "This issue or pull request already exists"
+    }
+]
