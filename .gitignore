@@ -256,3 +256,7 @@ venv
 docs.zip
 archive.zip
 ###
+
+### Docker Data Volume
+/postgres
+###
