@@ -1,14 +1,13 @@
 from typing import Optional
-from unicodedata import name
-from models import User
+
+from app.routers import user_account
 
 from fastapi import FastAPI
 
 app = FastAPI()
 
-import sqlalchemy
+app.include_router(user_account.router)
 
-DATABASE_URL = "postgresql://fastapi_user:rlaguscjf@127.0.0.1/user_db"
 
 @app.get("/")
 def read_root():
