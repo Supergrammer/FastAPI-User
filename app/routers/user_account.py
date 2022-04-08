@@ -1,4 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.configurations.database import get_db
+from app.services import user_account
 
 router = APIRouter(
     prefix="/user",
@@ -6,8 +10,8 @@ router = APIRouter(
 )
 
 @router.post("")
-async def create_user():
-    return {"123123": 25125205}
+async def create_user(db: Session = Depends(get_db)):
+    return user_account.create_user(db=db, email="eee")
 
 @router.get("")
 async def read_user():

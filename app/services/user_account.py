@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
-from app.models import User
-from app.response_models import User as User_response
+from app.models.user_model import User
+from app.schemas.user_schema import User as user
 
-def create_user():
-    return {"123123": 25125205}
+def create_user(db: Session, email: str):
+    return db.query(User).filter(User.email == email).all()
 
 def read_user():
     return {"123": 123123}
