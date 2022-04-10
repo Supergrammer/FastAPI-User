@@ -1,13 +1,13 @@
-from unicodedata import name
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Column, String, Boolean
 
-from app.configurations.database import Base
+from .base_model import Base, BaseMixin
 
-class User(Base):
+
+class User(Base, BaseMixin):
     __tablename__ = "user"
 
-    email = Column(String, primary_key=True, index=True)
-    hashed_password = Column(String)
-    username = Column(String)
-    nickname = Column(String)
-    is_active = Column(Boolean, default=True)
+    email = Column(String, primary_key=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
+    username = Column(String, nullable=False)
+    nickname = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
