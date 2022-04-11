@@ -3,11 +3,13 @@ from sqlalchemy.orm import Session
 from app.models.user_model import User
 from app.schemas import user_schema
 
+from app.modules import auth_module
+
 
 def create_user(db: Session, user: user_schema.UserCreate):
-    password = "hashedPassword"
+    hashed_password = auth_module.get_hashed_password(user.password)
 
-    db_user = User(email=user.email, password=password,
+    db_user = User(email=user.email, password=hashed_password,
                    username=user.username, nickname=user.nickname)
 
     db.add(db_user)
