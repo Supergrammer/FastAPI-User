@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.configurations.database import get_db
@@ -17,8 +17,12 @@ db = Depends(get_db)
 @router.post("", response_model=user_schema.User)
 async def create_user(user: user_schema.UserCreate, db: Session = db):
     db_user = user_account_service.get_user(db=db, email=user.email)
+    
     if db_user:
-        raise HTTPException(status_code=400, detail="E-mail already exists.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="E-mail already exists."
+        )
 
     return user_account_service.create_user(db=db, user=user)
 
@@ -26,17 +30,25 @@ async def create_user(user: user_schema.UserCreate, db: Session = db):
 @router.get("", response_model=user_schema.User)
 async def read_user(email: str, db: Session = db):
     db_user = user_account_service.get_user(db=db, email=email)
-    if not db_user:
-        raise HTTPException(status_code=400, detail="E-mail does not exist.")
     
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="E-mail does not exist."
+        )
+
     return db_user
 
 
 @router.put("", response_model=user_schema.User)
 async def update_user(user: user_schema.UserCreate, db: Session = db):
     db_user = user_account_service.get_user(db=db, email=user.email)
+    
     if not db_user:
-        raise HTTPException(status_code=400, detail="E-mail does not exist.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="E-mail does not exist."
+        )
 
     return user_account_service.update_user(db=db, user=user)
 
@@ -44,8 +56,12 @@ async def update_user(user: user_schema.UserCreate, db: Session = db):
 @router.delete("", response_model=user_schema.User)
 async def delete_user(email: str, db: Session = db):
     db_user = user_account_service.get_user(db=db, email=email)
+    
     if not db_user:
-        raise HTTPException(status_code=400, detail="E-mail does not exist.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="E-mail does not exist."
+        )
 
     return user_account_service.delete_user(db=db, email=email)
 
