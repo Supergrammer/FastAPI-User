@@ -260,3 +260,5 @@ archive.zip
 ### Docker Data Volume
 /postgres
 ###
+
+.env.*
