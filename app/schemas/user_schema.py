@@ -1,10 +1,7 @@
-from pydantic import BaseModel
-from datetime import datetime
+from pydantic import BaseModel, UUID4
 
-
-class BaseSchema(BaseModel):
-    created_date: datetime
-    updated_date: datetime
+from .base_schema import BaseSchema
+from .password_schema import Password
 
 
 class UserBase(BaseModel):
@@ -12,6 +9,7 @@ class UserBase(BaseModel):
 
 
 class User(UserBase, BaseSchema):
+    id: UUID4
     username: str
     nickname: str
     is_active: bool
