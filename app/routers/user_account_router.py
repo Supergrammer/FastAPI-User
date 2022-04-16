@@ -6,10 +6,14 @@ from app.services import user_account_service
 
 from app.schemas import user_schema
 
+from .user_password_router import router as user_password_router
+
 router = APIRouter(
     prefix="/users",
     tags=["user"],
 )
+
+router.include_router(user_password_router)
 
 db = Depends(get_db)
 
