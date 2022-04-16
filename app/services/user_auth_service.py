@@ -6,7 +6,7 @@ from app.modules import auth_module
 
 
 def get_user(db: Session, email: str):
-    return db.query(User).get(email)
+    return db.query(User).filter(User.email == email).first()
 
 
 def authenticate_user(db: Session, email: str, password: str):

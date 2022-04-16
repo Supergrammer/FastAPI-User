@@ -20,7 +20,7 @@ def create_user(db: Session, user: user_schema.UserCreate):
 
 
 def get_user(db: Session, email: str):
-    return db.query(User).get(email)
+    return db.query(User).filter(User.email == email).first()
 
 
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
