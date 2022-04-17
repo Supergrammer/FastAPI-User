@@ -9,6 +9,8 @@ from app.schemas import user_schema
 
 from app.modules import auth_module
 
+from app.http_exception import invalid_user_exception, credentials_exception
+
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
@@ -22,7 +24,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     db_user = user_auth_service.get_user(db=db, email=form_data.username)
 
     if not db_user:
-        raise auth_module.invalid_user_exception
+        raise invalid_user_exception
 
     access_token = auth_module.create_access_token(data={
         "e-mail": db_user.email
@@ -48,7 +50,7 @@ async def read_current_user(current_user: str = Depends(auth_module.get_current_
     db_user = user_auth_service.get_user(db=db, email=current_user)
 
     if not db_user:
-        raise auth_module.credentials_exception
+        raise credentials_exception
 
     return db_user
 
@@ -58,6 +60,6 @@ async def read_current_active_user(current_user: str = Depends(auth_module.get_c
     db_user = user_auth_service.get_user(db=db, email=current_user)
 
     if not db_user or not db_user.is_active:
-        raise auth_module.credentials_exception
+        raise credentials_exception
 
     return db_user
