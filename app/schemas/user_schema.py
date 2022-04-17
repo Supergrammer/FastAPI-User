@@ -39,7 +39,6 @@ class Request():
             orm_mode = True
 
     class UserUpdate(BaseModel):
-        email: str
         username: str
         nickname: str
 
@@ -47,10 +46,19 @@ class Request():
             orm_mode = True
 
 class Response():
-    class UserRead(BaseSchema):
+    class UserRead(UserBase):
         username: str
         nickname: str
         is_active: bool
     
+        class Config:
+            orm_mode = True
+
+    class UserReadDetail(UserBase, BaseSchema):
+        id: UUID4
+        username: str
+        nickname: str
+        is_active: bool
+
         class Config:
             orm_mode = True
