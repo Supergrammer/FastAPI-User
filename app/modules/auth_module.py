@@ -1,31 +1,24 @@
-from datetime import datetime, timedelta
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from fastapi import Depends, HTTPException, status
+from datetime import datetime, timedelta
 
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from app.configurations.settings import get_auth_module_settings
+from app.http_exception import credentials_exception
 
-SECRET_KEY = "bf3514e276481e953c7191a61cf3bf858f572f166954681144f7718874f13945"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRATION_PERIOD = 2 * 60 * 60
-REFRESH_TOKEN_EXPIRATION_PERIOD = 24 * 60 * 60
+auth = get_auth_module_settings()
+
+SECRET_KEY = auth.secret_key
+ALGORITHM = auth.algorithm
+ACCESS_TOKEN_EXPIRATION_PERIOD = auth.access_token_expiration_period
+REFRESH_TOKEN_EXPIRATION_PERIOD = auth.refresh_token_expiration_period
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
-
-invalid_user_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Incorrect E-mail or Password.",
-    headers={"WWW-Authenticate": "Bearer"}
-)
-
-credentials_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Could not validate credentials.",
-    headers={"WWW_Authenticate": "Bearer"}
-)
 
 
 def verify_password(plain_password, hashed_password):
@@ -46,10 +39,18 @@ def create_token(data: dict, expiration_period: timedelta):
 
     return access_token
 
-def create_access_token(data: dict, expiration_period: timedelta = timedelta(seconds=ACCESS_TOKEN_EXPIRATION_PERIOD)):
+
+def create_access_token(
+    data: dict,
+    expiration_period: timedelta = timedelta(milliseconds=int(ACCESS_TOKEN_EXPIRATION_PERIOD))
+):
     return create_token(data, expiration_period)
 
-def create_refresh_token(data: dict, expiration_period: timedelta = timedelta(seconds=REFRESH_TOKEN_EXPIRATION_PERIOD)):
+
+def create_refresh_token(
+    data: dict,
+    expiration_period: timedelta = timedelta(milliseconds=int(REFRESH_TOKEN_EXPIRATION_PERIOD))
+):
     return create_token(data, expiration_period)
 
 
