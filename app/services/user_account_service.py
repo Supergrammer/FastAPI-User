@@ -8,7 +8,6 @@ from app.schemas import user_schema
 from app.modules import auth_module
 
 
-### Create User
 def create_user(db: Session, user: user_schema.Request.UserCreate):
     hashed_password = auth_module.get_hashed_password(user.password)
 
@@ -26,19 +25,16 @@ def create_user(db: Session, user: user_schema.Request.UserCreate):
     return db_user
 
 
-### Get User By Email
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
 
-### Get All Users
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 
 
-### Update User
-def update_user(db: Session, user: user_schema.Request.UserCreate):
-    db_user = get_user_by_email(db=db, email=user.email)
+def update_user(db: Session, email: str, user: user_schema.Request.UserCreate):
+    db_user = get_user_by_email(db=db, email=email)
 
     db_user.username = user.username
     db_user.nickname = user.nickname
@@ -51,6 +47,7 @@ def update_user(db: Session, user: user_schema.Request.UserCreate):
 def delete_user(db: Session, email: str):
     db_user = get_user_by_email(db=db, email=email)
 
+    db.delete(db_user.password)
     db.delete(db_user)
     db.commit()
 
