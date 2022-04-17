@@ -6,21 +6,18 @@ from app.services import user_account_service
 
 from app.schemas import user_schema
 
-from .user_password_router import router as user_password_router
 
 router = APIRouter(
     prefix="/users",
     tags=["user"],
 )
 
-router.include_router(user_password_router)
-
 db = Depends(get_db)
 
 
-@router.post("", response_model=user_schema.User)
-async def create_user(user: user_schema.UserCreate, db: Session = db):
-    db_user = user_account_service.get_user(db=db, email=user.email)
+@router.post("", response_model=user_schema.Response.UserRead)
+def create_user(user: user_schema.Request.UserCreate, db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=user.email)
     
     if db_user:
         raise HTTPException(
@@ -31,9 +28,9 @@ async def create_user(user: user_schema.UserCreate, db: Session = db):
     return user_account_service.create_user(db=db, user=user)
 
 
-@router.get("", response_model=user_schema.User)
-async def read_user(email: str, db: Session = db):
-    db_user = user_account_service.get_user(db=db, email=email)
+@router.get("", response_model=user_schema.Response.UserRead)
+def read_user(email: str, db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=email)
     
     if not db_user:
         raise HTTPException(
@@ -44,9 +41,9 @@ async def read_user(email: str, db: Session = db):
     return db_user
 
 
-@router.put("", response_model=user_schema.User)
-async def update_user(user: user_schema.UserCreate, db: Session = db):
-    db_user = user_account_service.get_user(db=db, email=user.email)
+@router.put("", response_model=user_schema.Response.UserRead)
+def update_user(user: user_schema.Request.UserCreate, db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=user.email)
     
     if not db_user:
         raise HTTPException(
@@ -57,9 +54,9 @@ async def update_user(user: user_schema.UserCreate, db: Session = db):
     return user_account_service.update_user(db=db, user=user)
 
 
-@router.delete("", response_model=user_schema.User)
-async def delete_user(email: str, db: Session = db):
-    db_user = user_account_service.get_user(db=db, email=email)
+@router.delete("", response_model=user_schema.Response.UserRead)
+def delete_user(email: str, db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=email)
     
     if not db_user:
         raise HTTPException(
@@ -70,6 +67,6 @@ async def delete_user(email: str, db: Session = db):
     return user_account_service.delete_user(db=db, email=email)
 
 
-@router.get("/all", response_model=list[user_schema.User])
-async def read_all_users(skip: int | None = None, limit: int | None = None, db: Session = db):
+@router.get("/all", response_model=list[user_schema.Response.UserRead])
+def read_all_users(skip: int | None = None, limit: int | None = None, db: Session = db):
     return user_account_service.get_all_users(db=db, skip=skip, limit=limit)
