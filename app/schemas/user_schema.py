@@ -17,11 +17,40 @@ class User(UserBase, BaseSchema):
     class Config:
         orm_mode = True
 
-
-class UserCreate(UserBase):
-    password: str
+class UserAll(UserBase, BaseSchema):
+    id: UUID4
+    password: Password
     username: str
     nickname: str
+    is_active: bool
 
     class Config:
         orm_mode = True
+
+
+class Request():
+    class UserCreate(BaseModel):
+        email: str
+        password: str
+        username: str
+        nickname: str
+
+        class Config:
+            orm_mode = True
+
+    class UserUpdate(BaseModel):
+        email: str
+        username: str
+        nickname: str
+
+        class Config:
+            orm_mode = True
+
+class Response():
+    class UserRead(BaseSchema):
+        username: str
+        nickname: str
+        is_active: bool
+    
+        class Config:
+            orm_mode = True
