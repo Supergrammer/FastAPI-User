@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.configurations.database import get_db
-from app.services import user_account_service
-
-from app.schemas import user_schema
-
 from app.modules.auth_module import get_current_user
 
+from .user_password_router import router as user_password_router
+
+from app.schemas import user_schema
+from app.services import user_account_service
 from app.http_exception import user_already_exist_exception, user_not_exist_exception
 
 
@@ -15,6 +15,8 @@ router = APIRouter(
     prefix="/users",
     tags=["user"],
 )
+
+router.include_router(user_password_router)
 
 db = Depends(get_db)
 
@@ -52,7 +54,8 @@ async def update_user(
     current_user: str = Depends(get_current_user),
     db: Session = db
 ):
-    db_user = user_account_service.get_user_by_email(db=db, email=current_user)
+    db_user = user_account_service.get_user_by_email(
+        db=db, current_user=current_user)
 
     if not db_user:
         raise user_not_exist_exception
@@ -62,7 +65,8 @@ async def update_user(
 
 @router.delete("", response_model=user_schema.Response.UserReadDetail)
 async def delete_user(current_user: str = Depends(get_current_user), db: Session = db):
-    db_user = user_account_service.get_user_by_email(db=db, email=current_user)
+    db_user = user_account_service.get_user_by_email(
+        db=db, current_user=current_user)
 
     if not db_user:
         raise user_not_exist_exception
