@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
+from app.modules import auth_module
+
 from app.models.user_model import User
 from app.models.password_model import Password
 
 from app.schemas import user_schema
-
-from app.modules import auth_module
 
 
 def create_user(db: Session, user: user_schema.Request.UserCreate):
@@ -33,8 +33,8 @@ def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 
 
-def update_user(db: Session, email: str, user: user_schema.Request.UserCreate):
-    db_user = get_user_by_email(db=db, email=email)
+def update_user(db: Session, current_user: str, user: user_schema.Request.UserCreate):
+    db_user = get_user_by_email(db=db, email=current_user)
 
     db_user.username = user.username
     db_user.nickname = user.nickname
@@ -44,8 +44,8 @@ def update_user(db: Session, email: str, user: user_schema.Request.UserCreate):
     return db_user
 
 
-def delete_user(db: Session, email: str):
-    db_user = get_user_by_email(db=db, email=email)
+def delete_user(db: Session, current_user: str):
+    db_user = get_user_by_email(db=db, email=current_user)
 
     db.delete(db_user.password)
     db.delete(db_user)
