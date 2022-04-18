@@ -10,6 +10,11 @@ user_not_exist_exception = HTTPException(
     detail="E-mail does not exist."
 )
 
+bad_request = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Bad request."
+)
+
 invalid_user_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Incorrect E-mail or Password.",
