@@ -4,6 +4,7 @@ from app.modules import auth_module
 
 from app.models.user_model import User
 from app.models.password_model import Password
+from app.models.password_history_model import PasswordHistory
 
 from app.schemas import user_schema
 
@@ -11,9 +12,13 @@ from app.schemas import user_schema
 def create_user(db: Session, user: user_schema.Request.UserCreate):
     hashed_password = auth_module.get_hashed_password(user.password)
 
+    password_history = PasswordHistory(hashed_password=hashed_password)
+    password = Password(hashed_password=hashed_password,
+                        password_history=[password_history])
+
     db_user = User(
         email=user.email,
-        password=Password(hashed_password=hashed_password),
+        password=password,
         username=user.username,
         nickname=user.nickname
     )
