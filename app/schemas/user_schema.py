@@ -1,11 +1,11 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel, UUID4, EmailStr
 
 from .base_schema import BaseSchema
 from .password_schema import Password
 
 
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
 
 
 class User(UserBase, BaseSchema):
@@ -30,7 +30,7 @@ class UserAll(UserBase, BaseSchema):
 
 class Request():
     class UserCreate(BaseModel):
-        email: str
+        email: EmailStr
         password: str
         username: str
         nickname: str
