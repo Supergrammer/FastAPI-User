@@ -10,6 +10,11 @@ user_not_exist_exception = HTTPException(
     detail="E-mail does not exist."
 )
 
+password_match_exception = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="새로운 비밀번호가 이전 3개의 비밀번호와 같습니다."
+)
+
 bad_request = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="Bad request."
