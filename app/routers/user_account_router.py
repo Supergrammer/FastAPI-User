@@ -1,3 +1,4 @@
+import email
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -8,7 +9,7 @@ from .user_password_router import router as user_password_router
 
 from app.schemas import user_schema
 from app.services import user_account_service
-from app.http_exception import user_already_exist_exception, user_not_exist_exception
+from app.http_exception import user_already_exist_exception, user_not_exist_exception, credentials_exception
 
 
 router = APIRouter(
@@ -58,7 +59,7 @@ async def update_user(
         db=db, current_user=current_user)
 
     if not db_user:
-        raise user_not_exist_exception
+        raise credentials_exception
 
     return user_account_service.update_user(db=db, email=current_user, user=user)
 
@@ -69,9 +70,29 @@ async def delete_user(current_user: str = Depends(get_current_user), db: Session
         db=db, current_user=current_user)
 
     if not db_user:
-        raise user_not_exist_exception
+        raise credentials_exception
 
     return user_account_service.delete_user(db=db, email=current_user)
+
+
+@router.get("/me", response_model=user_schema.Response.UserReadDetail)
+async def read_user_me(current_user: str = Depends(get_current_user), db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=current_user)
+
+    if not db_user:
+        raise credentials_exception
+
+    return db_user
+
+
+@router.get("/me/active", response_model=user_schema.Response.UserReadDetail)
+async def read_user_me_active(current_user: str = Depends(get_current_user), db: Session = db):
+    db_user = user_account_service.get_user_by_email(db=db, email=current_user)
+
+    if not db_user or not db_user.is_active:
+        raise credentials_exception
+
+    return db_user
 
 
 @router.get("/all", response_model=list[user_schema.Response.UserRead])
