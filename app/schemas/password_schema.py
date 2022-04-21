@@ -1,4 +1,5 @@
 from pydantic import BaseModel, UUID4, Field, validator
+from datetime import datetime
 
 from .base_schema import BaseSchema
 
@@ -14,18 +15,11 @@ class Password(BaseSchema):
 
 class Request():
     class PasswordUpdate(BaseModel):
-        current_password: str
         new_password: str
         confirm_password: str
 
         @validator("new_password")
         def new_password_validate(cls, v):
-            return v
-
-        @validator("new_password")
-        def password_match(cls, v, values):
-            if "current_password" in values and v == values["current_password"]:
-                raise ValueError("입력한 비밀번호와 바꾸려는 비밀번호가 동일합니다.")
             return v
 
         @validator("confirm_password")
@@ -36,3 +30,12 @@ class Request():
 
         class Config:
             orm_mode = True
+
+
+class Response():
+    class PasswordExpirationDate(BaseModel):
+        updated_date: datetime = Field(alias="expiration_date")
+
+        class Config:
+            orm_mode = True
+            allow_population_by_field_name = True
