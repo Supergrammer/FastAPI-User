@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from app.configurations.settings import get_auth_module_settings
-from app.http_exception import credentials_exception
+from app.http_exception import credentials_exception, password_match_exception
 
 auth = get_auth_module_settings()
 
@@ -16,9 +16,12 @@ ALGORITHM = auth.algorithm
 ACCESS_TOKEN_EXPIRATION_PERIOD = auth.access_token_expiration_period
 REFRESH_TOKEN_EXPIRATION_PERIOD = auth.refresh_token_expiration_period
 
+PASSWORD_EXPIRATION_PERIOD = auth.password_expiration_period
+PREVIOUS_PASSWORD_HISTORY_MATCH_COUNT = auth.previous_password_history_match_count
+
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verify_password(plain_password, hashed_password):
@@ -27,6 +30,12 @@ def verify_password(plain_password, hashed_password):
 
 def get_hashed_password(plain_password):
     return password_context.hash(plain_password)
+
+
+def check_previous_password_history(plain_password, password_history: list[str]):
+    for history in password_history[:PREVIOUS_PASSWORD_HISTORY_MATCH_COUNT]:
+        if verify_password(plain_password, history.hashed_password):
+            raise password_match_exception
 
 
 def create_token(data: dict, expiration_period: timedelta):
@@ -42,14 +51,16 @@ def create_token(data: dict, expiration_period: timedelta):
 
 def create_access_token(
     data: dict,
-    expiration_period: timedelta = timedelta(milliseconds=int(ACCESS_TOKEN_EXPIRATION_PERIOD))
+    expiration_period: timedelta = timedelta(
+        milliseconds=ACCESS_TOKEN_EXPIRATION_PERIOD)
 ):
     return create_token(data, expiration_period)
 
 
 def create_refresh_token(
     data: dict,
-    expiration_period: timedelta = timedelta(milliseconds=int(REFRESH_TOKEN_EXPIRATION_PERIOD))
+    expiration_period: timedelta = timedelta(
+        milliseconds=REFRESH_TOKEN_EXPIRATION_PERIOD)
 ):
     return create_token(data, expiration_period)
 
