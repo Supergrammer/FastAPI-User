@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.configurations.database import get_db
@@ -19,9 +19,10 @@ router = APIRouter(
 db = Depends(get_db)
 
 
-@router.post("/token")
+@router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = db):
-    db_user = user_auth_service.get_user(db=db, email=form_data.username)
+    db_user = user_auth_service.authenticate_user(
+        db=db, email=form_data.username, password=form_data.password)
 
     if not db_user:
         raise invalid_user_exception
@@ -40,26 +41,19 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         "refresh_token": refresh_token
     }
 
-@router.post("/token/refresh")
+
+@router.post("/login/check")
+async def login_check(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = db):
+    db_user = user_auth_service.authenticate_user(
+        db=db, email=form_data.username, password=form_data.password)
+
+    if not db_user:
+        raise invalid_user_exception
+
+    return {}
+
+
+@router.post("/login/refresh")
 async def refresh_access_token(current_user):
     pass
 
-
-@router.get("/current", response_model=user_schema.User)
-async def read_current_user(current_user: str = Depends(auth_module.get_current_user), db: Session = db):
-    db_user = user_auth_service.get_user(db=db, email=current_user)
-
-    if not db_user:
-        raise credentials_exception
-
-    return db_user
-
-
-@router.get("/current/active", response_model=user_schema.User)
-async def read_current_active_user(current_user: str = Depends(auth_module.get_current_user), db: Session = db):
-    db_user = user_auth_service.get_user(db=db, email=current_user)
-
-    if not db_user or not db_user.is_active:
-        raise credentials_exception
-
-    return db_user
