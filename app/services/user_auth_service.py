@@ -14,7 +14,7 @@ def authenticate_user(db: Session, email: str, password: str):
 
     if not db_user:
         return False
-    if not auth_module.verify_password(password, db_user.password):
+    if not auth_module.verify_password(password, db_user.password.hashed_password):
         return False
 
     return db_user
