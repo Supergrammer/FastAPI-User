@@ -4,7 +4,7 @@ from functools import lru_cache
 import os
 
 
-class Settings(BaseSettings):
+class AppSettings(BaseSettings):
     # App Settings(.env)
     # NOTE: Need Factory Method??
     app_name: str = "FastAPI User Back-end"
@@ -38,8 +38,8 @@ class AuthModuleSettings(BaseSettings):
 
 
 @lru_cache
-def get_settings():
-    return Settings(_env_file=f".env.{os.getenv('MODE')}")
+def get_app_settings():
+    return AppSettings(_env_file=f".env.{os.getenv('MODE')}")
 
 
 @lru_cache
