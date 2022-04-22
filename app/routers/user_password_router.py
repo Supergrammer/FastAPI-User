@@ -5,13 +5,12 @@ from app.configurations.database import get_db
 from app.modules.auth_module import get_current_user
 
 from app.schemas import user_schema, password_schema
-from app.services import user_account_service, user_password_service
+from app.services import user_password_service
 from app.http_exception import credentials_exception
 
 
 router = APIRouter(
     prefix="/password",
-    tags=["user", "password"],
 )
 
 db = Depends(get_db)
