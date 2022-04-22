@@ -17,6 +17,7 @@ class User(UserBase, BaseSchema):
     class Config:
         orm_mode = True
 
+
 class UserAll(UserBase, BaseSchema):
     id: UUID4
     password: Password
@@ -45,12 +46,13 @@ class Request():
         class Config:
             orm_mode = True
 
+
 class Response():
     class UserRead(UserBase):
         username: str
         nickname: str
         is_active: bool
-    
+
         class Config:
             orm_mode = True
 

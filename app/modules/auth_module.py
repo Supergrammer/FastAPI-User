@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from app.configurations.settings import get_auth_module_settings
+
 from app.http_exception import credentials_exception, password_match_exception
 
 auth = get_auth_module_settings()

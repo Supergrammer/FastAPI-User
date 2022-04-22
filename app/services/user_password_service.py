@@ -3,18 +3,17 @@ from datetime import timedelta
 
 from app.modules import auth_module
 
-from app.models.user_model import User
-from app.models.password_model import Password
 from app.models.password_history_model import PasswordHistory
 
-from app.schemas import user_schema, password_schema
+from app.schemas import password_schema
+from .common import get_user_by_email
 
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(User).filter(User.email == email).first()
-
-
-def update_user_password(db: Session, current_user: str, password: password_schema.Request.PasswordUpdate):
+def update_user_password(
+    db: Session,
+    current_user: str,
+    password: password_schema.Request.PasswordUpdate
+):
     db_user = get_user_by_email(db=db, email=current_user)
 
     password_history = db_user.password.password_history
@@ -36,7 +35,10 @@ def update_user_password(db: Session, current_user: str, password: password_sche
     return db_user
 
 
-def get_expiration_date(db: Session, current_user: str):
+def get_expiration_date(
+    db: Session,
+    current_user: str
+):
     db_user = get_user_by_email(db=db, email=current_user)
 
     updated_date = db_user.password.updated_date
