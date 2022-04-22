@@ -17,9 +17,11 @@ class Password(Base, BaseMixin):
     password_history = relationship(
         "PasswordHistory",
         backref="password",
-        uselist=True,
         primaryjoin="foreign(Password.id) == PasswordHistory.id",
-        order_by="desc(PasswordHistory.created_date)"
+        cascade="all, delete-orphan",
+        single_parent=True,
+        order_by="desc(PasswordHistory.created_date)",
+        uselist=True
     )
 
     is_expired = Column(Boolean, nullable=False, default=False)
