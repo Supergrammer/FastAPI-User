@@ -5,7 +5,7 @@ from app.configurations.database import get_db
 from app.modules.auth_module import get_current_user
 
 from app.schemas import user_schema
-from app.services import user_account_service
+from app.services import user_service
 from app.services.common import get_user_by_email
 
 from app.http_exception import user_already_exist_exception, user_not_exist_exception, credentials_exception
@@ -29,7 +29,7 @@ def create_user(
     if db_user:
         raise user_already_exist_exception
 
-    return user_account_service.create_user(db=db, user=user)
+    return user_service.create_user(db=db, user=user)
 
 
 @router.get("", response_model=user_schema.Response.UserRead)
@@ -57,7 +57,7 @@ async def update_user(
     if not db_current_user:
         raise credentials_exception
 
-    return user_account_service.update_user(db=db, current_user=current_user, user=user)
+    return user_service.update_user(db=db, current_user=current_user, user=user)
 
 
 @router.delete("", response_model=user_schema.Response.UserReadDetail)
@@ -70,7 +70,7 @@ async def delete_user(
     if not db_current_user:
         raise credentials_exception
 
-    return user_account_service.delete_user(db=db, current_user=current_user)
+    return user_service.delete_user(db=db, current_user=current_user)
 
 
 @router.get("/me", response_model=user_schema.Response.UserReadDetail)
