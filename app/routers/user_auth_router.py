@@ -20,7 +20,10 @@ db = Depends(get_db)
 
 
 @router.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = db):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = db
+):
     db_user = user_auth_service.authenticate_user(
         db=db, email=form_data.username, password=form_data.password)
 
@@ -42,10 +45,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     }
 
 
-@router.post("/login/check")
-async def login_check(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = db):
+@router.post("/check")
+async def login_check(
+    password: str,
+    current_user: str = Depends(auth_module.get_current_user),
+    db: Session = db
+):
     db_user = user_auth_service.authenticate_user(
-        db=db, email=form_data.username, password=form_data.password)
+        db=db, email=current_user, password=password)
 
     if not db_user:
         raise invalid_user_exception
@@ -53,7 +60,9 @@ async def login_check(form_data: OAuth2PasswordRequestForm = Depends(), db: Sess
     return {}
 
 
-@router.post("/login/refresh")
-async def refresh_access_token(current_user):
-    pass
-
+@router.post("/refresh")
+async def refresh_access_token(
+    current_user: str = Depends(auth_module.get_current_user),
+    db: Session = db
+):
+    return {}
