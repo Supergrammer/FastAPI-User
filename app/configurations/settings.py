@@ -27,6 +27,7 @@ class AuthModuleSettings(BaseSettings):
     # Auth Module Settings (.env)
     secret_key: str
     algorithm: str
+    
     access_token_expiration_period: int
     refresh_token_expiration_period: int
 
