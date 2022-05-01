@@ -66,9 +66,40 @@ def create_refresh_token(
     return create_token(data, expiration_period)
 
 
+def get_token(email: str):
+    access_token = create_access_token(data={
+        "e-mail": email
+    })
+
+    refresh_token = create_refresh_token(data={
+        "e-mail": email
+    })
+
+    return {
+        "token_type": "Bearer",
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "expires_in": ACCESS_TOKEN_EXPIRATION_PERIOD
+    }
+
+
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("e-mail")
+
+        if email is None:
+            raise credentials_exception
+
+    except JWTError:
+        raise credentials_exception
+
+    return email
+
+async def get_current_expired_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload)
         email: str = payload.get("e-mail")
 
         if email is None:
