@@ -96,6 +96,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     return email
 
+
 async def get_current_expired_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.configurations.database import get_db
 from app.modules import auth_module
 
+from app.schemas import token_schema
 from app.services import auth_service
 
 from app.http_exception import invalid_user_exception
@@ -17,7 +18,7 @@ router = APIRouter(
 db = Depends(get_db)
 
 
-@router.post("/login")
+@router.post("/login", response_model=token_schema.Response.TokenDetail)
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = db
@@ -28,19 +29,7 @@ async def login(
     if not db_user:
         raise invalid_user_exception
 
-    access_token = auth_module.create_access_token(data={
-        "e-mail": db_user.email
-    })
-
-    refresh_token = auth_module.create_refresh_token(data={
-        "e-mail": db_user.email
-    })
-
-    return {
-        "token_type": "Bearer",
-        "access_token": access_token,
-        "refresh_token": refresh_token
-    }
+    return auth_module.get_token(db_user.email)
 
 
 @router.post("/check")
@@ -58,9 +47,10 @@ async def login_check(
     return {}
 
 
-@router.post("/refresh")
+@router.post("/refresh", response_model=token_schema.Response.TokenDetail)
 async def refresh_access_token(
-    current_user: str = Depends(auth_module.get_current_user),
+    token: token_schema.Request.TokenRefresh,
+    current_user: str = Depends(auth_module.get_current_expired_user),
     db: Session = db
 ):
     return {}
