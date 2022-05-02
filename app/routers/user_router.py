@@ -73,6 +73,16 @@ async def delete_user(
     return user_service.delete_user(db=db, current_user=current_user)
 
 
+@router.get("/check")
+def check_user_email(
+    email: str,
+    db: Session = db
+):
+    db_user = get_user_by_email(db=db, email=email)
+
+    return {"is_exist": bool(db_user)}
+
+
 @router.get("/me", response_model=user_schema.Response.UserReadDetail)
 async def read_user_me(
     current_user: str = Depends(get_current_user),
