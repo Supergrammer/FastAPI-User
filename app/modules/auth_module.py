@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 from app.configurations.settings import get_auth_module_settings
 
-from app.http_exception import credentials_exception, password_match_exception
+from app.http_exception import credentials_exception, password_match_exception, refresh_token_invalid_exception
 
 auth = get_auth_module_settings()
 
@@ -22,7 +22,7 @@ PREVIOUS_PASSWORD_HISTORY_MATCH_COUNT = auth.previous_password_history_match_cou
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 def verify_password(plain_password, hashed_password):
@@ -83,9 +83,29 @@ def get_token(email: str):
     }
 
 
+def get_token_detail(token: str, verify_exp: bool):
+    token_detail = jwt.decode(token, SECRET_KEY,
+                              algorithms=[ALGORITHM], options={"verify_exp": verify_exp})
+    return token_detail
+
+
+def refresh_expired_token(refresh_token: str, expired_user: str):
+    try:
+        payload = get_token_detail(token=refresh_token, verify_exp=True)
+        email: str = payload.get("e-mail")
+
+        if not email == expired_user:
+            raise refresh_token_invalid_exception
+
+    except JWTError:
+        raise refresh_token_invalid_exception
+
+    return get_token(email)
+
+
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = get_token_detail(token=token, verify_exp=True)
         email: str = payload.get("e-mail")
 
         if email is None:
@@ -97,16 +117,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return email
 
 
-async def get_current_expired_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(payload)
-        email: str = payload.get("e-mail")
+async def get_expired_user(token: str = Depends(oauth2_scheme)):
+    payload = get_token_detail(token=token, verify_exp=False)
+    email: str = payload.get("e-mail")
 
-        if email is None:
-            raise credentials_exception
-
-    except JWTError:
+    if email is None:
         raise credentials_exception
 
     return email
