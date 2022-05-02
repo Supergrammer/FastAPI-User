@@ -19,7 +19,8 @@ db = Depends(get_db)
 
 
 @router.post("/login", response_model=token_schema.Response.TokenDetail)
-async def login(
+@router.post("/token", response_model=token_schema.Response.TokenDetail)
+def get_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = db
 ):
@@ -32,7 +33,15 @@ async def login(
     return auth_module.get_token(db_user.email)
 
 
-@router.post("/check")
+@router.post("/token/refresh", response_model=token_schema.Response.TokenDetail)
+async def refresh_token(
+    token: token_schema.Request.TokenRefresh,
+    expired_user: str = Depends(auth_module.get_expired_user),
+):
+    return auth_module.refresh_expired_token(refresh_token=token.refresh_token, expired_user=expired_user)
+
+
+@router.post("/verify")
 async def login_check(
     password: str,
     current_user: str = Depends(auth_module.get_current_user),
@@ -44,13 +53,4 @@ async def login_check(
     if not db_user:
         raise invalid_user_exception
 
-    return {}
-
-
-@router.post("/refresh", response_model=token_schema.Response.TokenDetail)
-async def refresh_access_token(
-    token: token_schema.Request.TokenRefresh,
-    current_user: str = Depends(auth_module.get_current_expired_user),
-    db: Session = db
-):
     return {}
