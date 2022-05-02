@@ -43,6 +43,6 @@ def get_expiration_date(
 
     updated_date = db_user.password.updated_date
     expiration_date = updated_date + \
-        timedelta(milliseconds=auth_module.PASSWORD_EXPIRATION_PERIOD)
+        timedelta(seconds=auth_module.PASSWORD_EXPIRATION_PERIOD)
 
     return {"expiration_date": expiration_date}

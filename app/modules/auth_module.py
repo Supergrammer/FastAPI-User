@@ -53,7 +53,7 @@ def create_token(data: dict, expiration_period: timedelta):
 def create_access_token(
     data: dict,
     expiration_period: timedelta = timedelta(
-        milliseconds=ACCESS_TOKEN_EXPIRATION_PERIOD)
+        seconds=ACCESS_TOKEN_EXPIRATION_PERIOD)
 ):
     return create_token(data, expiration_period)
 
@@ -61,7 +61,7 @@ def create_access_token(
 def create_refresh_token(
     data: dict,
     expiration_period: timedelta = timedelta(
-        milliseconds=REFRESH_TOKEN_EXPIRATION_PERIOD)
+        seconds=REFRESH_TOKEN_EXPIRATION_PERIOD)
 ):
     return create_token(data, expiration_period)
 
