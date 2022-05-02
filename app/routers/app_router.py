@@ -9,10 +9,10 @@ router = APIRouter(
 
 
 @router.get("/info")
-async def app_app_info():
+def app_app_info():
     return get_app_settings()
 
 
 @router.get("/health-check")
-async def health_check():
+def health_check():
     return {"healthy": True}
