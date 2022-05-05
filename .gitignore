@@ -257,8 +257,9 @@ docs.zip
 archive.zip
 ###
 
-### Docker Data Volume
+### Docker Data Volume (Postgres, Redis)
 /postgres
+/redis
 ###
 
 .env.*
