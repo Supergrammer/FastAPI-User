@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.configurations.database import get_db
+from app.configurations.user_database import get_user_db
 from app.modules.auth_module import get_current_user
 
 from app.schemas import user_schema
@@ -16,7 +16,7 @@ router = APIRouter(
     tags=["user"],
 )
 
-db = Depends(get_db)
+db = Depends(get_user_db)
 
 
 @router.post("", response_model=user_schema.Response.UserReadDetail)
