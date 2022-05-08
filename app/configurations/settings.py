@@ -3,6 +3,8 @@ from functools import lru_cache
 
 import os
 
+env_file = f".env.{os.getenv('MODE')}"
+
 
 class AppSettings(BaseSettings):
     # App Settings(.env)
@@ -11,8 +13,8 @@ class AppSettings(BaseSettings):
     mode: str
 
 
-class DatabaseSettings(BaseSettings):
-    # Database Settings (.env)
+class UserDatabaseSettings(BaseSettings):
+    # User Database Settings (.env)
     database: str
     database_user: str
     database_password: str
@@ -23,11 +25,17 @@ class DatabaseSettings(BaseSettings):
         env_file = ".env"
 
 
+class RedisSettings(BaseSettings):
+    # Redis Settings (.env)
+
+    pass
+
+
 class AuthModuleSettings(BaseSettings):
     # Auth Module Settings (.env)
     secret_key: str
     algorithm: str
-    
+
     access_token_expiration_period: int
     refresh_token_expiration_period: int
 
@@ -40,14 +48,19 @@ class AuthModuleSettings(BaseSettings):
 
 @lru_cache
 def get_app_settings():
-    return AppSettings(_env_file=f".env.{os.getenv('MODE')}")
+    return AppSettings(_env_file=env_file)
 
 
 @lru_cache
-def get_database_settings():
-    return DatabaseSettings(_env_file=f".env.{os.getenv('MODE')}")
+def get_user_database_settings():
+    return UserDatabaseSettings(_env_file=env_file)
+
+
+@lru_cache
+def get_redis_settings():
+    return RedisSettings(_env_file=env_file)
 
 
 @lru_cache
 def get_auth_module_settings():
-    return AuthModuleSettings(_env_file=f".env.{os.getenv('MODE')}")
+    return AuthModuleSettings(_env_file=env_file)
