@@ -3,8 +3,10 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - aioredis=2.0.1=pyhd8ed1ab_0
   - argon2-cffi=21.3.0=pyhd8ed1ab_0
   - asgiref=3.5.0=pyhd8ed1ab_0
+  - async-timeout=4.0.2=pyhd8ed1ab_0
   - autopep8=1.6.0=pyhd8ed1ab_1
   - bzip2=1.0.8=h1de35cc_0
   - ca-certificates=2021.10.8=h033912b_0
@@ -22,7 +24,7 @@ dependencies:
   - libpq=12.9=h1c9f633_1
   - libuv=1.43.0=h0d85af4_0
   - ncurses=6.3=hca72f7f_2
-  - openssl=1.1.1n=h6c3fc93_0
+  - openssl=1.1.1o=hfe4f2af_0
   - passlib=1.7.4=pyh9f0ad1d_0
   - pyasn1=0.4.8=py_0
   - pycodestyle=2.8.0=pyhd8ed1ab_0
