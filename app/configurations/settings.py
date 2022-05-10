@@ -18,7 +18,8 @@ class UserDatabaseSettings(BaseSettings):
     database: str
     database_user: str
     database_password: str
-    database_server: str
+    database_host: str
+    database_port: int
     database_name: str
 
     class Config:
@@ -27,8 +28,12 @@ class UserDatabaseSettings(BaseSettings):
 
 class RedisSettings(BaseSettings):
     # Redis Settings (.env)
+    redis_password: str
+    redis_host: str
+    redis_port: int
 
-    pass
+    class Config:
+        env_file = ".env"
 
 
 class AuthModuleSettings(BaseSettings):
