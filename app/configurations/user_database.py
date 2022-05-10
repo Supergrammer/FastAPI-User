@@ -6,7 +6,7 @@ from .settings import get_user_database_settings
 
 db = get_user_database_settings()
 
-DATABASE_URL = f"{db.database}://{db.database_user}:{db.database_password}@{db.database_server}/{db.database_name}"
+DATABASE_URL = f"{db.database}://{db.database_user}:{db.database_password}@{db.database_host}:{db.database_port}/{db.database_name}"
 
 engine = create_engine(DATABASE_URL)
 db_session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
