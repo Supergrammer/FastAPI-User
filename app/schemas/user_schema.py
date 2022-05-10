@@ -39,7 +39,7 @@ class Request():
 
         @validator("password")
         def new_password_validate(cls, v):
-            password_regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()=+]).{8,}$"
+            password_regex = "^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()=+]).{8,}$"
             assert re.findall(
                 password_regex, v), "비밀번호는 8자 이상의 영문, 숫자, 특수문자로 구성되어야 합니다."
             return v
