@@ -45,9 +45,9 @@ def create_token(data: dict, expiration_period: timedelta):
     to_encode = data.copy()
     to_encode.update({"exp": expiration_datetime})
 
-    access_token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    return access_token
+    return token
 
 
 def create_access_token(
@@ -67,13 +67,10 @@ def create_refresh_token(
 
 
 def get_token(email: str):
-    access_token = create_access_token(data={
-        "e-mail": email
-    })
+    data = {"e-mail": email}
 
-    refresh_token = create_refresh_token(data={
-        "e-mail": email
-    })
+    access_token = create_access_token(data=data)
+    refresh_token = create_refresh_token(data=data)
 
     return {
         "token_type": "Bearer",
@@ -87,20 +84,6 @@ def get_token_detail(token: str, verify_exp: bool):
     token_detail = jwt.decode(token, SECRET_KEY,
                               algorithms=[ALGORITHM], options={"verify_exp": verify_exp})
     return token_detail
-
-
-def refresh_expired_token(refresh_token: str, expired_user: str):
-    try:
-        payload = get_token_detail(token=refresh_token, verify_exp=True)
-        email: str = payload.get("e-mail")
-
-        if not email == expired_user:
-            raise refresh_token_invalid_exception
-
-    except JWTError:
-        raise refresh_token_invalid_exception
-
-    return get_token(email)
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -117,7 +100,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return email
 
 
-async def get_expired_user(token: str = Depends(oauth2_scheme)):
+async def get_all_user(token: str = Depends(oauth2_scheme)):
     payload = get_token_detail(token=token, verify_exp=False)
     email: str = payload.get("e-mail")
 
