@@ -26,6 +26,12 @@ refresh_token_invalid_exception = HTTPException(
     headers={"WWW-Authenticate": "Bearer"}
 )
 
+access_token_invalid_exception = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="유효하지 않은 access_token 을 이용한 요청입니다.",
+    headers={"WWW-Authenticate": "Bearer"}
+)
+
 invalid_user_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Incorrect E-mail or Password.",
